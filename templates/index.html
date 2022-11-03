@@ -18,15 +18,35 @@
         body {
             background-color: black;
         }
+
+        .logout {
+            text-decoration: None;
+            color: White;
+            font-size: 30px;
+            position: absolute;
+            top: 10px;
+            right: 50px;
+        }
+
+        .user {
+            color: Black;
+            font-size: 30px;
+            position: absolute;
+            top: 10px;
+            left: 50px;
+        }
     </style>
 </head>
 
 <body>
+
+    <a href="{{url_for('logout')}}" class="logout" rel="noopener noreferrer">Logout</a>
+    <h4 class="user">Hello, {{username}}</h4>
     <div class="p-5"
         style="background-image: url('../static/images/bgphoto2.jpg'); background-repeat: no-repeat; background-size: cover; height: 50%;">
         <div class="container mt-4 mb-4">
             <h2 style="text-align: center; color: white;">Select the Stock :</h2>
-            <form action="/" method="post">
+            <form action="/home" method="post">
                 <div class="d-grid gap-2">
                     <select class="form-select form-select-lg mb-3" style="width: 60%; margin:auto;"
                         aria-label=".form-select-lg stockform" name="stockname">

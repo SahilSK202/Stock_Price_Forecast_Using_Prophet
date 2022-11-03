@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 import json
 import plotly
 import pandas as pd
@@ -12,10 +12,40 @@ app.secret_key = "123"
 DATA_PATH = os.path.join(os.path.dirname(__file__), "static", "data");
 MODELS_PATH = os.path.join(os.path.dirname(__file__), "static", "models");
 
+users = [
+    {"username" : "user1" , "password" : "user1"},
+    {"username" : "user2" , "password" : "user2"},
+    {"username" : "user3" , "password" : "user3"},
+    {"username" : "user4" , "password" : "user4"},
+    {"username" : "user5" , "password" : "user5"},
+]
+
 
 @app.route("/", methods=['GET' , 'POST'])
-def home():
+def landingpage():
     if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        # if(username == "admin" and password == "admin123"):
+        for user in users:
+            if(username == user['username'] and password == user['password']):
+                session['username'] = username
+                return render_template("index.html", username=session['username'])
+        else:
+            return render_template("login.html", msg="Invalid Credentials!")
+    else:
+        return render_template("login.html")
+
+@app.route("/logout", methods=['GET' , 'POST'])
+def logout():
+    session.pop('username', None)
+    return render_template("login.html")
+
+
+@app.route("/home", methods=['GET' , 'POST'])
+def home():
+    if request.method == 'POST' and session['username'] != None:
         # getting selected stock name
         stock = request.form['stockname']
 
@@ -97,9 +127,10 @@ def home():
         graphJSON1 = json.dumps(fig1, cls=plotly.utils.PlotlyJSONEncoder)
         
         
-        return render_template("index.html", stock=stock, graphJSON1=graphJSON1 )
+        return render_template("index.html", stock=stock, graphJSON1=graphJSON1 , username=session['username'] )
     else:
-        return render_template("index.html")
+        return render_template("index.html", username=session['username'])
+
 
 if __name__ == '__main__':
     app.run(debug=True)
